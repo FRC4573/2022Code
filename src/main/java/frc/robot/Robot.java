@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     */                    
   // Drive Stick \\
   //////////////////////////BUTTON MAPPINGs\\\\\\\\\\\\\\\\\\\\\\\\\
-  static boolean commandRan = false;
+  static boolean commandRan = true;
 
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
   WPI_VictorSPX m_frontRight = new WPI_VictorSPX(1);
