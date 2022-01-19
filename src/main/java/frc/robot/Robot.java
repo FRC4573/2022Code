@@ -7,9 +7,9 @@
 
 package frc.robot;
 
-
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -27,6 +27,18 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Spark;
 
+//***********************************************************
+//A.R
+//1/18/2022
+
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.cscore.MjpegServer;
 
  //**************************************************************************\\
  // The VM is configured to automatically run this class, and to call the    \\
@@ -81,6 +93,44 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
+    // Creates UsbCamera and MjpegServer [1] and connects them
+UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+mjpegServer1.setSource(usbCamera);
+
+// Creates the CvSink and connects it to the UsbCamera
+CvSink cvSink = new CvSink("opencv_USB Camera 0");
+cvSink.setSource(usbCamera);
+
+// Creates the CvSource and MjpegServer [2] and connects them
+CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+mjpegServer2.setSource(outputStream);
+
+mjpegServer1.close();
+cvSink.close();
+mjpegServer2.close();
+/*
+    new Thread(() -> {
+      UsbCamera camera = CameraServer.startAutomaticCapture();
+      camera.setResolution(640, 480);
+
+      CvSink cvSink = CameraServer.getVideo();
+      CvSource outputStream = CameraServer.putVideo("Blur", 640, 480);
+
+      Mat source = new Mat();
+      Mat output = new Mat();
+
+      while(!Thread.interrupted()) {
+        if (cvSink.grabFrame(source) == 0) {
+          continue;
+        }
+        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+        outputStream.putFrame(output);
+      }
+    }).start();
+  
+*/
     System.out.println("Robot Init: ");
 
     m_deadZone = 0.3;
