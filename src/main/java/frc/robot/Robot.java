@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -70,13 +71,7 @@ public class Robot extends TimedRobot {
   static boolean commandRan = false;
 
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
-  WPI_VictorSPX m_frontRight = new WPI_VictorSPX(1);
-  WPI_VictorSPX m_frontLeft = new WPI_VictorSPX(2);
-  WPI_VictorSPX m_rearRight = new WPI_VictorSPX(3);
-  WPI_VictorSPX m_rearLeft = new WPI_VictorSPX(4);
-  
-  SpeedControllerGroup m_left = new SpeedControllerGroup(m_frontLeft, m_rearLeft);
-  SpeedControllerGroup m_right = new SpeedControllerGroup(m_frontRight, m_rearRight);
+  Drive drivetrain = new Drive();
   
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -93,7 +88,49 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
+    new Thread(() -> {
+     
+      CameraServer cameraServer = CameraServer.getInstance();
+      VideoSource usbCam = cameraServer.startAutomaticCapture(); 
+      usbCam.setResolution(640,480);
+      usbCam.setFPS(1);
+    
+      // Creates the CvSink and connects it to the UsbCamera
+      CvSink cvSink = cameraServer.getVideo();
+    
+      // Creates the CvSource and MjpegServer [2] and connects them
+      CvSource outputStream = cameraServer.putVideo("Blur", 640, 480);
+
+      Mat source = new Mat();
+      Mat output = new Mat();
+
+      while(!Thread.interrupted()) {
+        if (cvSink.grabFrame(source) == 0) {
+          continue;
+        }
+        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(source, output, 250, 255, 0);
+        outputStream.putFrame(output);
+      }
+    }).start();
+  
+
+  /*
+ // Creates UsbCamera and MjpegServer [1] and connects them
+  CameraServer cameraServer = CameraServer.getInstance();
+  VideoSource usbCam = cameraServer.startAutomaticCapture(); 
+  usbCam.setResolution(640,480);
+  usbCam.setFPS(25);
+
+  // Creates the CvSink and connects it to the UsbCamera
+  CvSink cvSink = cameraServer.getVideo();
+
+  // Creates the CvSource and MjpegServer [2] and connects them
+  CvSource outputStream = cameraServer.putVideo("Blur", 640, 480);
+ 
     // Creates UsbCamera and MjpegServer [1] and connects them
+  */
+ /*
 UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
 MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
 mjpegServer1.setSource(usbCamera);
@@ -110,6 +147,7 @@ mjpegServer2.setSource(outputStream);
 mjpegServer1.close();
 cvSink.close();
 mjpegServer2.close();
+*/
 /*
     new Thread(() -> {
       UsbCamera camera = CameraServer.startAutomaticCapture();
@@ -148,7 +186,7 @@ mjpegServer2.close();
   control_stick = new Joystick(1);
 
 
-    m_drive = new DifferentialDrive(m_left, m_right);
+    m_drive = new DifferentialDrive(drivetrain.getLeftSpeedController(), drivetrain.getRightSpeedController());
     m_drive.setExpiration(0.50);
     m_drive.arcadeDrive(0, 0, true);
     m_drive.setSafetyEnabled(false);
