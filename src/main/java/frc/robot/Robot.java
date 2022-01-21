@@ -27,6 +27,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Spark;
+import org.opencv.core.*;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 //***********************************************************
 //A.R
@@ -103,13 +108,19 @@ public class Robot extends TimedRobot {
 
       Mat source = new Mat();
       Mat output = new Mat();
+      Mat grayscale = new Mat (); 
+      Mat circles = new Mat ();
+      Mat thresholder = new Mat ();
 
       while(!Thread.interrupted()) {
         if (cvSink.grabFrame(source) == 0) {
           continue;
         }
-        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.threshold(source, output, 250, 255, 0);
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Imgproc.cvtColor(source, grayscale, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(grayscale, thresholder, 140, 255, 1);
+        Imgproc.findContours(thresholder, contours, output, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.drawContours(output, contours, -1, new Scalar(0,255,0), 3);
         outputStream.putFrame(output);
       }
     }).start();
