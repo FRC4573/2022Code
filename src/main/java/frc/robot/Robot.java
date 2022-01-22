@@ -74,6 +74,9 @@ public class Robot extends TimedRobot {
   // Drive Stick \\
   //////////////////////////BUTTON MAPPINGs\\\\\\\\\\\\\\\\\\\\\\\\\
   static boolean commandRan = false;
+  Joystick joystick = new Joystick(0);
+  Talon motor1 = new Talon(0);
+  Talon motor2 = new Talon(1);
 
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
   Drive drivetrain = new Drive();
@@ -92,7 +95,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void robotInit() {
-
+    
     new Thread(() -> {
      
       CameraServer cameraServer = CameraServer.getInstance();
@@ -125,7 +128,7 @@ public class Robot extends TimedRobot {
       }
     }).start();
   
-
+    
   /*
  // Creates UsbCamera and MjpegServer [1] and connects them
   CameraServer cameraServer = CameraServer.getInstance();
@@ -249,7 +252,30 @@ mjpegServer2.close();
     double Z = getJoystickValue(drive_stick, 2) * m_driveTurnSpeed;
     
     m_drive.arcadeDrive(-X, Z, true); // Drive the robot
-   
+    if(joystick.getRawButtonPressed(8)==true){
+      motor1.setSpeed(0.8);
+    }
+    if(joystick.getRawButtonReleased(8)== true){
+      motor1.setSpeed(0.0);
+    }
+    if(joystick.getRawButtonPressed(7)==true){
+      motor1.setSpeed(-0.2);
+    }
+    if(joystick.getRawButtonReleased(7)== true){
+      motor1.setSpeed(0.0);
+    }
+    if(joystick.getRawButtonPressed(9)==true){
+      motor2.setSpeed(0.5);
+    }
+    if(joystick.getRawButtonReleased(9)== true){
+      motor2.setSpeed(0.0);
+    }
+    if(joystick.getRawButtonPressed(10)==true){
+      motor2.setSpeed(-0.2);
+    }
+    if(joystick.getRawButtonReleased(10)== true){
+      motor2.setSpeed(0);
+    }
   }
 
   @Override
