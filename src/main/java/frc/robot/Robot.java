@@ -56,7 +56,6 @@ import edu.wpi.cscore.MjpegServer;
 public class Robot extends TimedRobot {
   Joystick drive_stick;
   Joystick control_stick;
-  DifferentialDrive m_drive;
 
   double m_deadZone;
   double m_driveMotorSpeed;
@@ -75,12 +74,13 @@ public class Robot extends TimedRobot {
   //////////////////////////BUTTON MAPPINGs\\\\\\\\\\\\\\\\\\\\\\\\\
   static boolean commandRan = false;
   Joystick joystick = new Joystick(0);
-  Talon motor1 = new Talon(0);
-  Talon motor2 = new Talon(1);
+  //Talon motor1 = new Talon(0);
+  //Talon motor2 = new Talon(1);
+  //Talon motor3 = new Talon(2);
 
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
   Drive drivetrain = new Drive();
-  
+  Shooter shooter = new Shooter();
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
 
   Timer timer = new Timer();
@@ -198,12 +198,6 @@ mjpegServer2.close();
     
   drive_stick = new Joystick(0);
   control_stick = new Joystick(1);
-
-
-    m_drive = new DifferentialDrive(drivetrain.getLeftSpeedController(), drivetrain.getRightSpeedController());
-    m_drive.setExpiration(0.50);
-    m_drive.arcadeDrive(0, 0, true);
-    m_drive.setSafetyEnabled(false);
    
   }
 
@@ -237,7 +231,7 @@ mjpegServer2.close();
   //********************************************************\\
   @Override
   public void teleopInit() {
-    m_drive.arcadeDrive(0.0,0.0);
+    drivetrain.getDriveTrain().arcadeDrive(0.0,0.0);
   }
 
   //*******************************************************************\\
@@ -251,30 +245,43 @@ mjpegServer2.close();
     double X = getJoystickValue(drive_stick, 1) * m_driveMotorSpeed;
     double Z = getJoystickValue(drive_stick, 2) * m_driveTurnSpeed;
     
-    m_drive.arcadeDrive(-X, Z, true); // Drive the robot
+    drivetrain.getDriveTrain().arcadeDrive(-X, Z, true); // Drive the robot
+
     if(joystick.getRawButtonPressed(8)==true){
-      motor1.setSpeed(0.8);
-    }
-    if(joystick.getRawButtonReleased(8)== true){
-      motor1.setSpeed(0.0);
+      shooter.setMotor1Forward();
+    }  
+      if(joystick.getRawButtonReleased(8)== true){
+      shooter.setMotorStop1();
     }
     if(joystick.getRawButtonPressed(7)==true){
-      motor1.setSpeed(-0.2);
+      shooter.setMotorReverse1();
     }
     if(joystick.getRawButtonReleased(7)== true){
-      motor1.setSpeed(0.0);
+      shooter.setMotorStop1();
     }
-    if(joystick.getRawButtonPressed(9)==true){
-      motor2.setSpeed(0.5);
+    if(joystick.getRawButtonPressed(9)==true){ 
+      shooter.setMotor2Forward();
     }
     if(joystick.getRawButtonReleased(9)== true){
-      motor2.setSpeed(0.0);
+      shooter.setMotorStop2();
     }
     if(joystick.getRawButtonPressed(10)==true){
-      motor2.setSpeed(-0.2);
+      shooter.setMotorReverse2();
     }
     if(joystick.getRawButtonReleased(10)== true){
-      motor2.setSpeed(0);
+      shooter.setMotorStop2();
+    }
+    if(joystick.getRawButtonPressed(11)==true){
+      shooter.setMotorReverse3();
+    }
+    if(joystick.getRawButtonReleased(11)== true){
+      shooter.setMotorStop3();
+    }
+    if(joystick.getRawButtonPressed(12)==true){
+      shooter.setMotorReverse3();
+    }
+    if(joystick.getRawButtonReleased(12)== true){
+      shooter.setMotorStop3();
     }
   }
 
