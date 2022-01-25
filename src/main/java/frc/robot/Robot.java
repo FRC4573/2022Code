@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
       Mat source = new Mat();
       Mat output = new Mat();
       Mat grayscale = new Mat (); 
-      Mat circles = new Mat ();
+      Mat circless = new Mat ();
       Mat thresholder = new Mat ();
 
       while(!Thread.interrupted()) {
