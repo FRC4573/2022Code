@@ -20,7 +20,7 @@ public class Shooter {
         return this.motor3;
     }
     public void setMotor1Forward(){
-        this.motor1.setSpeed(0.8);
+        this.motor1.setSpeed(1.0);
     }
     public void setMotor2Forward(){
         this.motor2.setSpeed(0.8);

@@ -81,6 +81,9 @@ public class Robot extends TimedRobot {
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
   Drive drivetrain = new Drive();
   Shooter shooter = new Shooter();
+  Spark motor1 = new Spark(8);
+  Spark motor2 = new Spark(9);
+
     //////////////////////////Motor Controllers\\\\\\\\\\\\\\\\\\\\\\\\\
 
   Timer timer = new Timer();
@@ -112,7 +115,7 @@ public class Robot extends TimedRobot {
       Mat source = new Mat();
       Mat output = new Mat();
       Mat grayscale = new Mat (); 
-      Mat circlesss = new Mat ();
+      Mat circles = new Mat ();
       Mat thresholder = new Mat ();
 
       while(!Thread.interrupted()) {
@@ -198,8 +201,10 @@ mjpegServer2.close();
     
   drive_stick = new Joystick(0);
   control_stick = new Joystick(1);
-   
+  
   }
+  
+
 
   //*********************************************************************************\\
   // This function is called every robot packet, no matter the mode. Use this for    \\
@@ -247,16 +252,16 @@ mjpegServer2.close();
     
     drivetrain.getDriveTrain().arcadeDrive(-X, Z, true); // Drive the robot
 
-    if(joystick.getRawButtonPressed(8)==true){
+    if(joystick.getRawButtonPressed(7)==true){
       shooter.setMotor1Forward();
     }  
-      if(joystick.getRawButtonReleased(8)== true){
+      if(joystick.getRawButtonReleased(7)== true){
       shooter.setMotorStop1();
     }
-    if(joystick.getRawButtonPressed(7)==true){
+    if(joystick.getRawButtonPressed(8)==true){
       shooter.setMotorReverse1();
     }
-    if(joystick.getRawButtonReleased(7)== true){
+    if(joystick.getRawButtonReleased(8)== true){
       shooter.setMotorStop1();
     }
     if(joystick.getRawButtonPressed(9)==true){ 
@@ -283,6 +288,9 @@ mjpegServer2.close();
     if(joystick.getRawButtonReleased(12)== true){
       shooter.setMotorStop3();
     }
+//gearbox test\\
+   /* if(joystick.getRawButtonPressed(3)==true){
+      gearbox.setSpeed(0.5);}*/
   }
 
   @Override
